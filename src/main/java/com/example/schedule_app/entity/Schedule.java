@@ -14,12 +14,14 @@ public class Schedule extends BaseEntity{
     private Long id;
     private String title;
     private String contents;
-    private String username;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public Schedule(String title, String contents, String username) {
+    public Schedule(String title, String contents, User user) {
         this.title = title;
         this.contents = contents;
-        this.username = username;
+        this.user = user;
     }
     public void update (UpdateScheduleRequest request){
         this.title = request.getTitle();

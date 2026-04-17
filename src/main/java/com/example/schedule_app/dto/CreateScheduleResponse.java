@@ -22,7 +22,7 @@ public class CreateScheduleResponse {
         schedule.getId(),
         schedule.getTitle(),
         schedule.getContents(),
-        schedule.getUsername()
+        schedule.getUser().getUsername()
         );
     }
 }

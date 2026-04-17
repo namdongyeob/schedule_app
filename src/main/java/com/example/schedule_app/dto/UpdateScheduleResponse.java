@@ -27,7 +27,7 @@ public class UpdateScheduleResponse {
                 schedule.getId(),
                 schedule.getTitle(),
                 schedule.getContents(),
-                schedule.getUsername(),
+                schedule.getUser().getUsername(),
                 schedule.getCreatedAt(),
                 schedule.getModifiedAt()
         );
