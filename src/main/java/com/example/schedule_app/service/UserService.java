@@ -1,12 +1,13 @@
 package com.example.schedule_app.service;
 
 import com.example.schedule_app.dto.*;
-import com.example.schedule_app.entity.Schedule;
 import com.example.schedule_app.entity.User;
+import com.example.schedule_app.repository.ScheduleRepository;
 import com.example.schedule_app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 
@@ -17,9 +18,13 @@ public class UserService {
 
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
+        if (request.getPassword().length() < 8) {
+            throw new IllegalStateException("비밀번호는 8글자 이상이어야 합니다.");
+        }
         User user = new User(
                 request.getUsername(),
-                request.getEmail()
+                request.getEmail(),
+                request.getPassword()
         );
         User savedUser = userRepository.save(user);
         return CreateUserResponse.from(savedUser);
@@ -37,7 +42,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public GetUserResponse findOne(Long userId) {
             User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("없는 일정입니다."));
+                () -> new IllegalStateException("없는 유저입니다."));
         return GetUserResponse.from(user);
     }
 
@@ -45,14 +50,20 @@ public class UserService {
     public UpdateUserResponse update(Long userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("없는 유저입니다."));
+        if (!user.getPassword().equals(request.getPassword())){
+            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
+        }
         user.update(request);
         return UpdateUserResponse.from(user);
     }
 
     @Transactional
-    public void delete(Long userId) {
+    public void delete(Long userId,DeleteUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("없는 유저입니다."));
+        if (!user.getPassword().equals(request.getPassword())){
+            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
+        }
         userRepository.delete(user);
     }
 }
