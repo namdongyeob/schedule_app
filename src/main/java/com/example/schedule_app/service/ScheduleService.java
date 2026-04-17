@@ -3,6 +3,9 @@ package com.example.schedule_app.service;
 import com.example.schedule_app.dto.*;
 import com.example.schedule_app.entity.Schedule;
 import com.example.schedule_app.entity.User;
+import com.example.schedule_app.exception.InvalidPasswordException;
+import com.example.schedule_app.exception.ScheduleNotFoundException;
+import com.example.schedule_app.exception.UserNotFoundException;
 import com.example.schedule_app.repository.ScheduleRepository;
 import com.example.schedule_app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +23,7 @@ public class ScheduleService {
     @Transactional
     public CreateScheduleResponse save(CreateScheduleRequest request) {
         User user = userRepository.findById(request.getUserId()).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 유저입니다.")
+                () -> new UserNotFoundException("존재하지 않는 유저입니다.")
         );
         Schedule schedule = new Schedule(
                 request.getTitle(),
@@ -43,16 +46,16 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public GetScheduleResponse findOne(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("없는 일정입니다."));
+                () -> new ScheduleNotFoundException("없는 일정입니다."));
         return GetScheduleResponse.from(schedule);
     }
 
     @Transactional
     public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("없는 일정입니다."));
+                () -> new ScheduleNotFoundException("없는 일정입니다."));
         if (!schedule.getUser().getId().equals(request.getUserId())) {
-            throw new IllegalStateException("작성자만 수정할 수 있습니다.");
+            throw new InvalidPasswordException("작성자만 수정할 수 있습니다.");
         }
         schedule.update(request);
         return UpdateScheduleResponse.from(schedule);
@@ -61,9 +64,9 @@ public class ScheduleService {
     @Transactional
     public void delete(Long scheduleId, DeleteScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("없는 일정입니다."));
+                () -> new ScheduleNotFoundException("없는 일정입니다."));
         if (!schedule.getUser().getId().equals(request.getUserId())) {
-            throw new IllegalStateException("작성자만 삭제할 수 있습니다.");
+            throw new InvalidPasswordException("작성자만 삭제할 수 있습니다.");
         }
         scheduleRepository.delete(schedule);
     }
