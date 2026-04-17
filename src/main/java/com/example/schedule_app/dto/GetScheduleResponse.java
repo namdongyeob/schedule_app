@@ -26,7 +26,7 @@ public class GetScheduleResponse {
         return new GetScheduleResponse(schedule.getId(),
                 schedule.getTitle(),
                 schedule.getContents(),
-                schedule.getUsername(),
+                schedule.getUser().getUsername(),
                 schedule.getCreatedAt(),
                 schedule.getModifiedAt()
         );
