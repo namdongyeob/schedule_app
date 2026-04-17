@@ -1,5 +1,6 @@
 package com.example.schedule_app.service;
 
+import com.example.schedule_app.config.PasswordEncoder;
 import com.example.schedule_app.dto.*;
 import com.example.schedule_app.entity.User;
 import com.example.schedule_app.exception.InvalidPasswordException;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
@@ -26,7 +28,7 @@ public class UserService {
         User user = new User(
                 request.getUsername(),
                 request.getEmail(),
-                request.getPassword()
+                passwordEncoder.encode(request.getPassword())
         );
         User savedUser = userRepository.save(user);
         return CreateUserResponse.from(savedUser);
@@ -52,7 +54,7 @@ public class UserService {
     public UpdateUserResponse update(Long userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("없는 유저입니다."));
-        if (!user.getPassword().equals(request.getPassword())){
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
         user.update(request);
@@ -63,7 +65,7 @@ public class UserService {
     public void delete(Long userId,DeleteUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("없는 유저입니다."));
-        if (!user.getPassword().equals(request.getPassword())){
+        if (!passwordEncoder.matches(request.getPassword(),user.getPassword())){
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
         userRepository.delete(user);

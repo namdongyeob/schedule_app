@@ -1,5 +1,6 @@
 package com.example.schedule_app.service;
 
+import com.example.schedule_app.config.PasswordEncoder;
 import com.example.schedule_app.dto.LoginRequest;
 import com.example.schedule_app.entity.User;
 import com.example.schedule_app.exception.InvalidPasswordException;
@@ -14,12 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public User login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new UserNotFoundException("존재하지 않는 유저입니다."));
-        if (!user.getPassword().equals(request.getPassword())){
+        if (!passwordEncoder.matches(request.getPassword(),user.getPassword())){
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
         return user;
