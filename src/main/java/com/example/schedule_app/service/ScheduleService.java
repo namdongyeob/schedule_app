@@ -63,7 +63,7 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("없는 일정입니다."));
         if (!schedule.getUser().getId().equals(request.getUserId())) {
-            throw new IllegalStateException("작성자만 수정할 수 있습니다.");
+            throw new IllegalStateException("작성자만 삭제할 수 있습니다.");
         }
         scheduleRepository.delete(schedule);
     }
