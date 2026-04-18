@@ -23,14 +23,4 @@ public class SchedulePageResponse {
         this.modifiedAt = modifiedAt;
         this.username = username;
     }
-    public static SchedulePageResponse of(Schedule schedule, Long commentCount){
-        return new SchedulePageResponse(
-                schedule.getTitle(),
-                schedule.getContents(),
-                commentCount,
-                schedule.getCreatedAt(),
-                schedule.getModifiedAt(),
-                schedule.getUser().getUsername()
-        );
-    }
 }

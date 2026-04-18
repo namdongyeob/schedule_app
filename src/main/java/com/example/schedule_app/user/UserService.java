@@ -20,9 +20,6 @@ public class UserService {
 
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
-        if (request.getPassword().length() < 8) {
-            throw new InvalidPasswordException("비밀번호는 8글자 이상이어야 합니다.");
-        }
         User user = new User(
                 request.getUsername(),
                 request.getEmail(),

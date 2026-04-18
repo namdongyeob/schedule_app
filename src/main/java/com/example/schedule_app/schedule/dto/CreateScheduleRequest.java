@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class CreateScheduleRequest {
-    @NotBlank
+    @NotBlank(message = "제목을 입력해주세요")
     private String title;
-    @NotBlank
+    @NotBlank(message = "내용을 입력해주세요")
     private String contents;
     private Long userId;
 }
