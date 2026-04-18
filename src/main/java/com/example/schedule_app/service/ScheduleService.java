@@ -9,6 +9,9 @@ import com.example.schedule_app.exception.UserNotFoundException;
 import com.example.schedule_app.repository.ScheduleRepository;
 import com.example.schedule_app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,5 +72,11 @@ public class ScheduleService {
             throw new InvalidPasswordException("작성자만 삭제할 수 있습니다.");
         }
         scheduleRepository.delete(schedule);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SchedulePageResponse> findAllWithPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return scheduleRepository.findAllWithCommentCount(pageable);
     }
 }
